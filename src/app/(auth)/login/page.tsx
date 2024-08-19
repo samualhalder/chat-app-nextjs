@@ -14,7 +14,7 @@ function LogInPage() {
       await signIn("google");
     } catch (error) {
       setErrorMessage(error);
-      console.log(error);
+    console.log(error);
     }
     setIsLoading(false);
   };
