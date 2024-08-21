@@ -11,7 +11,11 @@ import {
   HiViewBoards,
 } from "react-icons/hi";
 
-export function DashSideBar() {
+export function DashSideBar({
+  unseenFriendRequest,
+}: {
+  unseenFriendRequest: number;
+}) {
   return (
     <Sidebar aria-label="Default sidebar example" className="w-full">
       <Sidebar.Items>
@@ -19,16 +23,13 @@ export function DashSideBar() {
           <Sidebar.Item href="#" icon={HiChartPie}>
             Dashboard
           </Sidebar.Item>
+
           <Sidebar.Item
             href="#"
-            icon={HiViewBoards}
-            label="Pro"
-            labelColor="dark"
+            icon={HiUser}
+            label={unseenFriendRequest.toString()}
           >
-            Kanban
-          </Sidebar.Item>
-          <Sidebar.Item href="#" icon={HiInbox} label="3">
-            Inbox
+            Friend request
           </Sidebar.Item>
           <Sidebar.Item href="#" icon={HiUser}>
             Users
