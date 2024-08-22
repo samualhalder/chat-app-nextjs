@@ -20,19 +20,19 @@ export function DashSideBar({
     <Sidebar aria-label="Default sidebar example" className="w-full">
       <Sidebar.Items>
         <Sidebar.ItemGroup>
-          <Sidebar.Item href="#" icon={HiChartPie}>
+          <Sidebar.Item href="/dashboard" icon={HiChartPie}>
             Dashboard
           </Sidebar.Item>
 
           <Sidebar.Item
-            href="#"
+            href="/dashboard/requests"
             icon={HiUser}
             label={unseenFriendRequest.toString()}
           >
             Friend request
           </Sidebar.Item>
-          <Sidebar.Item href="#" icon={HiUser}>
-            Users
+          <Sidebar.Item href="/dashboard/add" icon={HiUser}>
+            Add friends
           </Sidebar.Item>
           <Sidebar.Item href="#" icon={HiShoppingBag}>
             Products

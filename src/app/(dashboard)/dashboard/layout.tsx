@@ -20,7 +20,7 @@ const Layout = async ({ children }: { children: React.ReactNode }) => {
   return (
     <div className="h-screen w-[100%] flex flex-col sm:flex-row grow-0 ">
       {/* SideBar */}
-      <div className="flex flex-col justify-between w-full sm:w-[400px] border-2 border-cyan-600">
+      <div className="flex flex-col justify-between w-full sm:w-[500px] border-2 border-cyan-600">
         <IoIosChatboxes size={60} className="mx-auto" />
         <nav className="text-gray-700 p-10">
           <h1 className="text-lg font-semibold">chats</h1>
@@ -56,7 +56,7 @@ const Layout = async ({ children }: { children: React.ReactNode }) => {
         </div>
       </div>
       {/* children */}
-      <div className="p-2">{children}</div>
+      <div className="p-2 w-[100%]">{children}</div>
     </div>
   );
 };
