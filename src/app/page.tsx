@@ -11,7 +11,7 @@ export default async function Home() {
     <main>
       <h1 className="text-5xl">HEllo WOrld:{JSON.stringify(session)}</h1>
       <Link href={"/dashboard/add"}>
-        <Button>Dashboard</Button>
+        <Button className="m-5">Dashboard</Button>
       </Link>
       <Alert color={"failure"}>message</Alert>
     </main>

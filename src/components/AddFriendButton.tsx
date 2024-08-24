@@ -64,10 +64,14 @@ export default function AddFriendButton() {
           <Button type="submit">Add</Button>
         </div>
         {errors && errors.email?.message?.length && (
-          <Alert color="failure">{errors.email?.message}</Alert>
+          <Alert color="failure" className="mt-2">
+            {errors.email?.message}
+          </Alert>
         )}
         {successStauts && (
-          <Alert color={"success"}>Friend request send succesfully</Alert>
+          <Alert color={"success"} className="mt-2">
+            Friend request send succesfully
+          </Alert>
         )}
       </form>
     </>

@@ -27,7 +27,7 @@ export function DashSideBar({
           <Sidebar.Item
             href="/dashboard/requests"
             icon={HiUser}
-            label={unseenFriendRequest.toString()}
+            label={unseenFriendRequest > 0 && unseenFriendRequest.toString()}
           >
             Friend request
           </Sidebar.Item>
