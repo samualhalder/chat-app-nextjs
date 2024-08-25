@@ -24,5 +24,5 @@ export function SignOutButton() {
         {isSigningOut ? <Spinner /> : <PiSignOutBold></PiSignOutBold>}
       </Button>
     </>
-  );
+  );b
 }
