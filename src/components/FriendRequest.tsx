@@ -18,8 +18,7 @@ export function FriendRequest({
   );
 
   const acceptFriend = async (friendId: string) => {
-    console.log("hit fun");
-
+  
     const response = await axios.post("/api/friend/accept", { id: friendId });
     console.log(response);
 
@@ -55,7 +54,7 @@ export function FriendRequest({
               >
                 <IoMdAdd />
               </Button>
-              <Button color="red">
+              <Button color="red" onClick={() => denyFriend(request.senderId)}>
                 <FcCancel />
               </Button>
               <HR color="black" />
