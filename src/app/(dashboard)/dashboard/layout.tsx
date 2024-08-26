@@ -1,21 +1,30 @@
 import { DashSideBar } from "@/components/DashSideBar";
+import SidebarChatList from "@/components/SidebarChatList";
 import { SignOutButton } from "@/components/SignOutButton";
+import { getAllFriendsById } from "@/helper/get-all-friends-by-id";
 import { fetchRedis } from "@/helper/redis";
 import { authOptions } from "@/lib/auth";
+import { Sidebar } from "flowbite-react";
 import { getServerSession } from "next-auth";
 import Image from "next/image";
+import { notFound } from "next/navigation";
 import React from "react";
 import { IoIosChatboxes } from "react-icons/io";
 
 const Layout = async ({ children }: { children: React.ReactNode }) => {
   const userSession = await getServerSession(authOptions);
   const user = userSession?.user;
+  if (!userSession) {
+    return notFound();
+  }
   const unseenFriendRequest = (
     (await fetchRedis(
       "smembers",
       `user:${userSession?.user?.id}:incoming_friend_request`
     )) as []
   ).length;
+
+  const friends = (await getAllFriendsById(userSession?.user.id)) as User[];
 
   return (
     <div className="h-screen w-[100%] flex flex-col sm:flex-row grow-0 ">
@@ -24,10 +33,7 @@ const Layout = async ({ children }: { children: React.ReactNode }) => {
         <IoIosChatboxes size={60} className="mx-auto" />
         <nav className="text-gray-700 p-10">
           <h1 className="text-lg font-semibold">chats</h1>
-          <ul>
-            <li>//chats goes hre</li>
-            <li>//chats goes hre</li>
-          </ul>
+          <SidebarChatList friends={friends} />
         </nav>
         {/* dash side options */}
         <div>
