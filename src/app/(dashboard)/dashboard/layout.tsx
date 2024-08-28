@@ -33,7 +33,10 @@ const Layout = async ({ children }: { children: React.ReactNode }) => {
         <IoIosChatboxes size={60} className="mx-auto" />
         <nav className="text-gray-700 p-10">
           <h1 className="text-lg font-semibold">chats</h1>
-          <SidebarChatList friends={friends} />
+          <SidebarChatList
+            sessionUserId={userSession.user.id}
+            friends={friends}
+          />
         </nav>
         {/* dash side options */}
         <div>
@@ -62,7 +65,7 @@ const Layout = async ({ children }: { children: React.ReactNode }) => {
         </div>
       </div>
       {/* children */}
-      <div className="p-2 w-[100%]">{children}</div>
+      <div className=" w-[100%]">{children}</div>
     </div>
   );
 };

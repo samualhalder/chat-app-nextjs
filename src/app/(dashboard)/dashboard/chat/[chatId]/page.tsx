@@ -3,6 +3,7 @@ import { authOptions } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { messageArrayValidator } from "@/lib/validators/messages";
 import { getServerSession } from "next-auth";
+import Image from "next/image";
 import { notFound } from "next/navigation";
 import React from "react";
 
@@ -46,7 +47,23 @@ export default async function Page({ params }: ParamsType) {
   const messages = getMessages(chatId);
   return (
     <>
-      <div>{chatId}</div>
+      <div className="flex felx-col max-h-screen p-0 m-0">
+        {/* top bar  */}
+        <div className="flex items-center gap-4 border-b-2 border-cyan-400 w-full p-2">
+          <div className="h-10 w-10 rounded-full overflow-hidden relative ">
+            <Image
+              fill
+              //   referrerPolicy="norefference"
+              src={chatPartner.image}
+              alt="image"
+            />
+          </div>
+          <div>
+            <p className="text-xl font-semibold">{chatPartner.name}</p>
+            <p className="text-gray-600">{chatPartner.email}</p>
+          </div>
+        </div>
+      </div>
     </>
   );
 }
