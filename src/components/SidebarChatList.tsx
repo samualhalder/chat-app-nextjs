@@ -31,7 +31,7 @@ export default function SidebarChatList({
             className=" flex gap-1 items-center m-2 border-2 p-2 border-white shadow-md rounded-md hover:text-gray-400"
           >
             <a
-              href={`${chatHrefGenerator(sessionUserId, friend.id)}`}
+            href={`${chatHrefGenerator(sessionUserId, friend.id)}`}   //its /dashboard/chat/userid1--userid2
               className="flex items-center gap-1"
             >
               <div className="h-10 w-10 rounded-full overflow-hidden">

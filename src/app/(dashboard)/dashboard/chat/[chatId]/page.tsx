@@ -1,3 +1,5 @@
+import ChatInput from "@/components/ChatInput";
+import Message from "@/components/Message";
 import { fetchRedis } from "@/helper/redis";
 import { authOptions } from "@/lib/auth";
 import { db } from "@/lib/db";
@@ -44,10 +46,10 @@ export default async function Page({ params }: ParamsType) {
   }
   const chatPartnerId = userId === user1Id ? user2Id : user1Id;
   const chatPartner = (await db.get(`user:${chatPartnerId}`)) as User;
-  const messages = getMessages(chatId);
+  const messages = await getMessages(chatId);
   return (
     <>
-      <div className="flex felx-col max-h-screen p-0 m-0">
+      <div className="flex flex-col justify-between  h-full flex-grow p-0 m-0">
         {/* top bar  */}
         <div className="flex items-center gap-4 border-b-2 border-cyan-400 w-full p-2">
           <div className="h-10 w-10 rounded-full overflow-hidden relative ">
@@ -63,6 +65,8 @@ export default async function Page({ params }: ParamsType) {
             <p className="text-gray-600">{chatPartner.email}</p>
           </div>
         </div>
+        <Message sessionUserId={session.user.id} initialMessages={messages} />
+        <ChatInput />
       </div>
     </>
   );

@@ -13,6 +13,7 @@
     "@next-auth/upstash-redis-adapter": "^3.0.4",
     "@upstash/redis": "^1.34.0",
     "axios": "^1.7.4",
+    "clsx": "^2.1.1",
     "flowbite": "^2.5.1",
     "flowbite-react": "^0.10.1",
     "next": "14.2.5",
@@ -20,6 +21,7 @@
     "react": "^18",
     "react-dom": "^18",
     "react-hook-form": "^7.52.2",
+    "tailwind-merge": "^2.5.2",
     "zod": "^3.23.8"
   },
   "devDependencies": {
