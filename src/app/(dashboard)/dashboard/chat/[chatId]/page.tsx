@@ -66,7 +66,7 @@ export default async function Page({ params }: ParamsType) {
           </div>
         </div>
         <Message sessionUserId={session.user.id} initialMessages={messages} />
-        <ChatInput />
+        <ChatInput chatPartner={chatPartner} />
       </div>
     </>
   );
