@@ -8,7 +8,6 @@ interface User {
 interface Message {
   id: string;
   senderId: string;
-  reciverId: string;
   text: string;
   timestamp: number;
 }

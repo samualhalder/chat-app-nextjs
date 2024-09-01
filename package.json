@@ -16,6 +16,7 @@
     "clsx": "^2.1.1",
     "flowbite": "^2.5.1",
     "flowbite-react": "^0.10.1",
+    "nanoid": "^5.0.7",
     "next": "14.2.5",
     "next-auth": "^4.24.7",
     "react": "^18",

@@ -14,6 +14,8 @@ export default function Message({
 }) {
   const scrollDownRef = useRef<HTMLDivElement | null>(null);
   const [messages, setMessages] = useState<Message[]>(initialMessages);
+  console.log(initialMessages);
+
   return (
     <div className="flex h-full flex-1 flex-col-reverse gap-4 p-3 overflow-y-auto">
       <div ref={scrollDownRef} />
@@ -55,9 +57,6 @@ export default function Message({
           </div>
         );
       })}
-      <p>Message 1</p>
-      <p>Message 2</p>
-      <p>Message 3</p>
     </div>
   );
 }
