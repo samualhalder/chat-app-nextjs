@@ -18,6 +18,7 @@ export default function ChatInput({
   const [error, seterror] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const sendMessage = async () => {
+    if (typedMessage === "") return;
     if (isLoading) return;
     setIsLoading(true);
     seterror(false);

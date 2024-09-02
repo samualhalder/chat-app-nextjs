@@ -2,29 +2,42 @@
 
 import { Message } from "@/lib/validators/messages";
 import { format } from "date-fns";
-import { cn } from "@/lib/utils";
+import { cn, toPusherString } from "@/lib/utils";
 
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { timeStamp } from "console";
 import Image from "next/image";
+import { pusherClient } from "@/lib/pusher";
 
 export default function Message({
   initialMessages,
   sessionUserId,
   sessionImage,
   chatPartner,
+  chatId,
 }: {
   initialMessages: Message[];
   sessionUserId: string;
   sessionImage: string | undefined | null;
   chatPartner: User;
+  chatId: string;
 }) {
   const scrollDownRef = useRef<HTMLDivElement | null>(null);
   const [messages, setMessages] = useState<Message[]>(initialMessages);
   const formatTimeStamp = (timestamp) => {
     return format(timestamp, "HH:mm");
   };
-
+  useEffect(() => {
+    pusherClient.subscribe(toPusherString(`chat:${chatId}`));
+    const handleMessage = (message: Message) => {
+      setMessages((pre) => [message, ...pre]);
+    };
+    pusherClient.bind("incoming-messages", handleMessage);
+    return () => {
+      pusherClient.unsubscribe(toPusherString(`chat:${chatId}`));
+      pusherClient.unbind("incoming-messages", handleMessage);
+    };
+  }, []);
   return (
     <div className="flex h-full flex-1 flex-col-reverse gap-4 p-3 overflow-y-auto">
       <div ref={scrollDownRef} />

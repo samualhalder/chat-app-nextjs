@@ -74,6 +74,7 @@ export default async function Page({ params }: ParamsType) {
           initialMessages={messages}
           sessionImage={session.user.image}
           chatPartner={chatPartner}
+          chatId={chatId}
         />
         <ChatInput chatId={chatId} chatPartner={chatPartner} />
       </div>
