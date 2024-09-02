@@ -36,7 +36,7 @@ export async function POST(req: Request) {
       timestamp,
     };
     const message = messageValidator.parse(messageObject);
-    await db.zadd(`user:${chatId}:message`, {
+    await db.zadd(`chat:${chatId}:messages`, {
       score: timestamp,
       member: JSON.stringify(message),
     });

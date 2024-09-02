@@ -1,20 +1,29 @@
 "use client";
 
 import { Message } from "@/lib/validators/messages";
+import { format } from "date-fns";
 import { cn } from "@/lib/utils";
 
 import React, { useRef, useState } from "react";
+import { timeStamp } from "console";
+import Image from "next/image";
 
 export default function Message({
   initialMessages,
   sessionUserId,
+  sessionImage,
+  chatPartner,
 }: {
   initialMessages: Message[];
   sessionUserId: string;
+  sessionImage: string | undefined | null;
+  chatPartner: User;
 }) {
   const scrollDownRef = useRef<HTMLDivElement | null>(null);
   const [messages, setMessages] = useState<Message[]>(initialMessages);
-  console.log(initialMessages);
+  const formatTimeStamp = (timestamp) => {
+    return format(timestamp, "HH:mm");
+  };
 
   return (
     <div className="flex h-full flex-1 flex-col-reverse gap-4 p-3 overflow-y-auto">
@@ -49,9 +58,27 @@ export default function Message({
                   {message.text}
                   {""}
                   <span className="text-xs text-gray-400 ml-3">
-                    {message.timestamp}
+                    {formatTimeStamp(message.timestamp)}
                   </span>
                 </span>
+              </div>
+              <div
+                className={cn("relative w-10 h-10", {
+                  "order-2": isCurrentUser,
+                  "order-1": !isCurrentUser,
+                  invisible: haveNextMessageFromSameUser,
+                })}
+              >
+                <Image
+                  fill
+                  src={
+                    isCurrentUser
+                      ? (sessionImage as string)
+                      : (chatPartner.image as string)
+                  }
+                  alt="image"
+                  className="rounded-full"
+                />
               </div>
             </div>
           </div>

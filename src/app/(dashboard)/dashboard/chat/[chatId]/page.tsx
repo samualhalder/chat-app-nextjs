@@ -19,7 +19,7 @@ const getMessages = async (chatId: string) => {
   try {
     const results: string[] = await fetchRedis(
       "zrange",
-      `user:${chatId}:message`,
+      `chat:${chatId}:messages`,
       0,
       -1
     );
@@ -69,11 +69,14 @@ export default async function Page({ params }: ParamsType) {
             <p className="text-gray-600">{chatPartner.email}</p>
           </div>
         </div>
-        <Message sessionUserId={session.user.id} initialMessages={messages} />
+        <Message
+          sessionUserId={session.user.id}
+          initialMessages={messages}
+          sessionImage={session.user.image}
+          chatPartner={chatPartner}
+        />
         <ChatInput chatId={chatId} chatPartner={chatPartner} />
       </div>
     </>
   );
 }
-//  user:2105cbe8-7d48-455c-ae63-03e1973407f6--73bc70b8-dd01-457c-9f85-eda74763bebd:message
-// 2105cbe8-7d48-455c-ae63-03e1973407f6--73bc70b8-dd01-457c-9f85-eda74763bebd

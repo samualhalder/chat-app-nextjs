@@ -18,6 +18,8 @@ export default function ChatInput({
   const [error, seterror] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const sendMessage = async () => {
+    if (isLoading) return;
+    setIsLoading(true);
     seterror(false);
     try {
       await axios.post(`/api/message/send`, { text: typedMessage, chatId });
