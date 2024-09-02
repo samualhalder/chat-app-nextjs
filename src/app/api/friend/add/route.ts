@@ -1,6 +1,8 @@
 import { fetchRedis } from "@/helper/redis";
 import { authOptions } from "@/lib/auth";
 import { db } from "@/lib/db";
+import { pusherServer } from "@/lib/pusher";
+import { toPusherString } from "@/lib/utils";
 import { addFriendValidator } from "@/lib/validators/addFriend-validator";
 import { getServerSession } from "next-auth";
 import { z } from "zod";
@@ -48,6 +50,16 @@ export async function POST(req: Request) {
     if (isAlreadyFriends) {
       return new Response("user alredy added ", { status: 400 });
     }
+
+    pusherServer.trigger(
+      toPusherString(`user:${userIdToAdd}:incoming_friend_request`),
+      "incoming_friend_request",
+      {
+        senderId: session.user.id,
+        senderEmail: session.user.email,
+      }
+    );
+
     db.sadd(`user:${userIdToAdd}:incoming_friend_request`, session.user.id);
     return new Response("OK");
   } catch (error) {

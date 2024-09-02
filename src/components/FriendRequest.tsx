@@ -1,26 +1,28 @@
 "use client";
 import { Button, HR } from "flowbite-react";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { IoMdAdd } from "react-icons/io";
 import { CiUser } from "react-icons/ci";
 import { FcCancel } from "react-icons/fc";
 import axios from "axios";
 import { useRouter } from "next/navigation";
+import { pusherClient } from "@/lib/pusher";
+import { toPusherString } from "@/lib/utils";
 
 export function FriendRequest({
   incomingFriendRequest,
+  sessionId,
 }: {
-  incomingFriendRequest: FriendRequest[];
+  incomingFriendRequest: IncomingFriendRequest[];
+  sessionId: string;
 }) {
   const router = useRouter();
-  const [friendRequests, setFriendRequests] = useState<FriendRequest[]>(
+  const [friendRequests, setFriendRequests] = useState<IncomingFriendRequest[]>(
     incomingFriendRequest
   );
 
   const acceptFriend = async (friendId: string) => {
-  
     const response = await axios.post("/api/friend/accept", { id: friendId });
-    console.log(response);
 
     setFriendRequests((pre) =>
       pre.filter((sender) => sender.senderId !== friendId)
@@ -38,6 +40,25 @@ export function FriendRequest({
 
     router.refresh();
   };
+
+  useEffect(() => {
+    pusherClient.subscribe(
+      toPusherString(`user:${sessionId}:incoming_friend_request`)
+    );
+    const handleFriendRequest = ({
+      senderId,
+      senderEmail,
+    }: IncomingFriendRequest) => {
+      setFriendRequests((pre) => [...pre, { senderId, senderEmail }]);
+    };
+    pusherClient.bind("incoming_friend_request", handleFriendRequest);
+    return () => {
+      pusherClient.unsubscribe(
+        toPusherString(`user:${sessionId}:incoming_friend_request`)
+      );
+      pusherClient.unbind("incoming_friend_request", handleFriendRequest);
+    };
+  }, []);
   return (
     <>
       {friendRequests.length === 0 ? (
@@ -47,7 +68,7 @@ export function FriendRequest({
           {friendRequests.map((request) => (
             <div key={request.senderId} className="flex gap-2 items-center">
               <CiUser />
-              <p>{request.email}</p>
+              <p>{request.senderEmail}</p>
               <Button
                 color="green"
                 onClick={() => acceptFriend(request.senderId)}

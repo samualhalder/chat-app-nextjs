@@ -40,7 +40,10 @@ const Layout = async ({ children }: { children: React.ReactNode }) => {
         </nav>
         {/* dash side options */}
         <div>
-          <DashSideBar unseenFriendRequest={unseenFriendRequest} />
+          <DashSideBar
+            unseenFriendRequest={unseenFriendRequest}
+            sessionId={userSession.user.id}
+          />
         </div>
 
         {/* User section */}

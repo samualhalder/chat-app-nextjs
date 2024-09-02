@@ -1,6 +1,9 @@
 "use client";
 
+import { pusherClient } from "@/lib/pusher";
+import { toPusherString } from "@/lib/utils";
 import { Sidebar } from "flowbite-react";
+import { useEffect, useState } from "react";
 import {
   HiArrowSmRight,
   HiChartPie,
@@ -13,9 +16,28 @@ import {
 
 export function DashSideBar({
   unseenFriendRequest,
+  sessionId,
 }: {
   unseenFriendRequest: number;
+  sessionId: string;
 }) {
+  const [unSeenFriendRequestCount, setUnSeenFriendRequestCount] =
+    useState<number>(unseenFriendRequest);
+  useEffect(() => {
+    pusherClient.subscribe(
+      toPusherString(`user:${sessionId}:incoming_friend_request`)
+    );
+    const handleFriendRequest = () => {
+      setUnSeenFriendRequestCount((pre) => pre + 1);
+    };
+    pusherClient.bind("incoming_friend_request", handleFriendRequest);
+    return () => {
+      pusherClient.unsubscribe(
+        toPusherString(`user:${sessionId}:incoming_friend_request`)
+      );
+      pusherClient.unbind("incoming_friend_request", handleFriendRequest);
+    };
+  }, []);
   return (
     <Sidebar aria-label="Default sidebar example" className="w-full">
       <Sidebar.Items>
@@ -24,12 +46,16 @@ export function DashSideBar({
             Dashboard
           </Sidebar.Item>
 
-          <Sidebar.Item
-            href="/dashboard/requests"
-            icon={HiUser}
-            label={unseenFriendRequest > 0 && unseenFriendRequest.toString()}
-          >
-            Friend request
+          <Sidebar.Item href="/dashboard/requests" icon={HiUser}>
+            <div className="flex justify-between">
+              <h1>Friend request</h1>
+              <span
+                className="h-6 w-6 bg-purple-500 rounded-md text-center text-white "
+                hidden={unSeenFriendRequestCount == 0}
+              >
+                {unSeenFriendRequestCount}
+              </span>
+            </div>
           </Sidebar.Item>
           <Sidebar.Item href="/dashboard/add" icon={HiUser}>
             Add friends
