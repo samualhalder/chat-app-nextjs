@@ -54,7 +54,7 @@ export default function SidebarChatList({
     if (pathname?.includes("chat")) {
       unseenMessages.filter((msg) => !pathname.includes(msg.senderId));
     }
-  }, [pathname]);
+  }, [pathname, unseenMessages]);
   return (
     <div>
       <MessageToast message={lastMessage} sessionUserId={sessionUserId} />

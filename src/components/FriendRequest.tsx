@@ -58,7 +58,7 @@ export function FriendRequest({
       );
       pusherClient.unbind("incoming_friend_request", handleFriendRequest);
     };
-  }, []);
+  }, [sessionId]);
   return (
     <>
       {friendRequests.length === 0 ? (
