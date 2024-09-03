@@ -49,7 +49,11 @@ export default async function Page({ params }: ParamsType) {
     return notFound();
   }
   const chatPartnerId = userId === user1Id ? user2Id : user1Id;
-  const chatPartner = (await db.get(`user:${chatPartnerId}`)) as User;
+  const chatPartnerRaw = (await fetchRedis(
+    "get",
+    `user:${chatPartnerId}`
+  )) as string;
+  const chatPartner = JSON.parse(chatPartnerRaw) as User;
   const messages = await getMessages(chatId);
   return (
     <>

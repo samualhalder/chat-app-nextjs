@@ -48,7 +48,7 @@ export default function SidebarChatList({
       pusherClient.unsubscribe(toPusherString(`user:${sessionUserId}:chats`));
       pusherClient.unsubscribe(toPusherString(`user:${sessionUserId}:friends`));
     };
-  }, [pathname]);
+  }, [pathname, sessionUserId, router]);
 
   useEffect(() => {
     if (pathname?.includes("chat")) {
@@ -57,7 +57,7 @@ export default function SidebarChatList({
   }, [pathname]);
   return (
     <div>
-      <MessageToast message={lastMessage} sessionUserId={sessionUserId}/>
+      <MessageToast message={lastMessage} sessionUserId={sessionUserId} />
       <h1 className="text-lg font-semibold">chats</h1>
       <ul className="max-h-[125rem] overflow-y-hidden">
         {friends.sort().map((friend, ind) => {
