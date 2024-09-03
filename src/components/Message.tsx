@@ -1,6 +1,5 @@
 "use client";
 
-import { Message } from "@/lib/validators/messages";
 import { format } from "date-fns";
 import { cn, toPusherString } from "@/lib/utils";
 
@@ -24,7 +23,7 @@ export default function Message({
 }) {
   const scrollDownRef = useRef<HTMLDivElement | null>(null);
   const [messages, setMessages] = useState<Message[]>(initialMessages);
-  const formatTimeStamp = (timestamp) => {
+  const formatTimeStamp = (timestamp: number) => {
     return format(timestamp, "HH:mm");
   };
   useEffect(() => {

@@ -6,7 +6,7 @@ import { notFound } from "next/navigation";
 import React from "react";
 import { FriendRequest } from "@/components/FriendRequest";
 
-export default async function Page(props) {
+export default async function Page() {
   const session = await getServerSession(authOptions);
   if (!session) return notFound();
   const requesredIds = (await fetchRedis(
