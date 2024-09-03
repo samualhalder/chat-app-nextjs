@@ -1,11 +1,13 @@
-import AddFriendButton from "@/components/AddFriendButton";
-import React from "react";
+import AddFriendButton from '@/components/AddFriendButton'
+import { FC } from 'react'
 
-export default async function Page() {
+const page: FC = () => {
   return (
-    <div className="pt-8">
-      <h1 className="text-5xl font-bold ">Add Friends</h1>
+    <main className='pt-8'>
+      <h1 className='font-bold text-5xl mb-8'>Add a friend</h1>
       <AddFriendButton />
-    </div>
-  );
+    </main>
+  )
 }
+
+export default page

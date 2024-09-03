@@ -1,28 +1,36 @@
-"use client";
-import { Button, Spinner } from "flowbite-react";
-import { signOut } from "next-auth/react";
-import { useRouter } from "next/navigation";
-import React, { useState } from "react";
-import { PiSignOutBold } from "react-icons/pi";
+'use client'
 
-export function SignOutButton() {
-  const [isSigningOut, setIsSigningOut] = useState(false);
-  const router = useRouter();
-  const handleSingOut = async () => {
-    setIsSigningOut(true);
-    try {
-      await signOut();
-      router.replace("/login");
-    } catch (error) {
-      console.log(error);
-    }
-    setIsSigningOut(true);
-  };
+import { Loader2, LogOut } from 'lucide-react'
+import { signOut } from 'next-auth/react'
+import { ButtonHTMLAttributes, FC, useState } from 'react'
+import { toast } from 'react-hot-toast'
+import Button from './ui/Button'
+
+interface SignOutButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {}
+
+const SignOutButton: FC<SignOutButtonProps> = ({ ...props }) => {
+  const [isSigningOut, setIsSigningOut] = useState<boolean>(false)
   return (
-    <>
-      <Button disabled={isSigningOut} onClick={handleSingOut}>
-        {isSigningOut ? <Spinner /> : <PiSignOutBold></PiSignOutBold>}
-      </Button>
-    </>
+    <Button
+      {...props}
+      variant='ghost'
+      onClick={async () => {
+        setIsSigningOut(true)
+        try {
+          await signOut()
+        } catch (error) {
+          toast.error('There was a problem signing out')
+        } finally {
+          setIsSigningOut(false)
+        }
+      }}>
+      {isSigningOut ? (
+        <Loader2 className='animate-spin h-4 w-4' />
+      ) : (
+        <LogOut className='w-4 h-4' />
+      )}
+    </Button>
   )
 }
+
+export default SignOutButton

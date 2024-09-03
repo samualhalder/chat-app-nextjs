@@ -1,19 +1,8 @@
-import { authOptions } from "@/lib/auth";
-import { db } from "@/lib/db";
-import { Alert, Button } from "flowbite-react";
-import { getServerSession } from "next-auth";
-import Link from "next/link";
+"use client"
 
-export default async function Home() {
-  const session = await getServerSession(authOptions);
+import Button from '@/components/ui/Button'
+import { signOut } from 'next-auth/react'
 
-  return (
-    <main>
-      <h1 className="text-5xl">HEllo WOrld:{JSON.stringify(session)}</h1>
-      <Link href={"/dashboard/add"}>
-        <Button className="m-5">Dashboard</Button>
-      </Link>
-      <Alert color={"failure"}>message</Alert>
-    </main>
-  );
+export default function Home() {
+  return <button onClick={() => signOut()}>Sign out</button>
 }

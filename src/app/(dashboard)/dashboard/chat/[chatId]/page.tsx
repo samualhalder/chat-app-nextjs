@@ -1,87 +1,121 @@
-import ChatInput from "@/components/ChatInput";
-import Message from "@/components/Message";
-import { fetchRedis } from "@/helper/redis";
-import { authOptions } from "@/lib/auth";
-import { db } from "@/lib/db";
-import { messageArrayValidator } from "@/lib/validators/messages";
-import { getServerSession } from "next-auth";
-import Image from "next/image";
-import { notFound } from "next/navigation";
-import React from "react";
+import ChatInput from '@/components/ChatInput'
+import Messages from '@/components/Messages'
+import { fetchRedis } from '@/helpers/redis'
+import { authOptions } from '@/lib/auth'
+import { messageArrayValidator } from '@/lib/validations/message'
+import { getServerSession } from 'next-auth'
+import Image from 'next/image'
+import { notFound } from 'next/navigation'
 
-type ParamsType = {
+// The following generateMetadata functiion was written after the video and is purely optional
+export async function generateMetadata({
+  params,
+}: {
+  params: { chatId: string }
+}) {
+  const session = await getServerSession(authOptions)
+  if (!session) notFound()
+  const [userId1, userId2] = params.chatId.split('--')
+  const { user } = session
+
+  const chatPartnerId = user.id === userId1 ? userId2 : userId1
+  const chatPartnerRaw = (await fetchRedis(
+    'get',
+    `user:${chatPartnerId}`
+  )) as string
+  const chatPartner = JSON.parse(chatPartnerRaw) as User
+
+  return { title: `FriendZone | ${chatPartner.name} chat` }
+}
+
+interface PageProps {
   params: {
-    chatId: string;
-  };
-};
+    chatId: string
+  }
+}
 
-const getMessages = async (chatId: string) => {
+async function getChatMessages(chatId: string) {
   try {
     const results: string[] = await fetchRedis(
-      "zrange",
+      'zrange',
       `chat:${chatId}:messages`,
       0,
       -1
-    );
-    console.log(chatId);
-    console.log("res", results);
+    )
 
-    const dbMessages = results.map((message) => JSON.parse(message) as Message);
-    console.log("db", dbMessages);
+    const dbMessages = results.map((message) => JSON.parse(message) as Message)
 
-    const reverseDbmessages = dbMessages.reverse();
-    const messages = messageArrayValidator.parse(reverseDbmessages);
-    return messages;
+    const reversedDbMessages = dbMessages.reverse()
+
+    const messages = messageArrayValidator.parse(reversedDbMessages)
+
+    return messages
   } catch (error) {
-    return notFound();
+    notFound()
   }
-};
+}
 
-export default async function Page({ params }: ParamsType) {
-  const { chatId } = params;
-  const session = await getServerSession(authOptions);
-  if (!session) {
-    return notFound();
+const page = async ({ params }: PageProps) => {
+  const { chatId } = params
+  const session = await getServerSession(authOptions)
+  if (!session) notFound()
+
+  const { user } = session
+
+  const [userId1, userId2] = chatId.split('--')
+
+  if (user.id !== userId1 && user.id !== userId2) {
+    notFound()
   }
-  const userId = session.user.id;
-  const [user1Id, user2Id] = chatId.split("--");
-  if (userId !== user1Id && userId !== user2Id) {
-    return notFound();
-  }
-  const chatPartnerId = userId === user1Id ? user2Id : user1Id;
+
+  const chatPartnerId = user.id === userId1 ? userId2 : userId1
+  // new
+
   const chatPartnerRaw = (await fetchRedis(
-    "get",
+    'get',
     `user:${chatPartnerId}`
-  )) as string;
-  const chatPartner = JSON.parse(chatPartnerRaw) as User;
-  const messages = await getMessages(chatId);
+  )) as string
+  const chatPartner = JSON.parse(chatPartnerRaw) as User
+  const initialMessages = await getChatMessages(chatId)
+
   return (
-    <>
-      <div className="flex flex-col justify-between  h-full flex-grow p-0 m-0">
-        {/* top bar  */}
-        <div className="flex items-center gap-4 border-1 shadow-lg w-full p-2">
-          <div className="h-10 w-10 rounded-full overflow-hidden relative ">
-            <Image
-              fill
-              //   referrerPolicy="norefference"
-              src={chatPartner.image}
-              alt="image"
-            />
+    <div className='flex-1 justify-between flex flex-col h-full max-h-[calc(100vh-6rem)]'>
+      <div className='flex sm:items-center justify-between py-3 border-b-2 border-gray-200'>
+        <div className='relative flex items-center space-x-4'>
+          <div className='relative'>
+            <div className='relative w-8 sm:w-12 h-8 sm:h-12'>
+              <Image
+                fill
+                referrerPolicy='no-referrer'
+                src={chatPartner.image}
+                alt={`${chatPartner.name} profile picture`}
+                className='rounded-full'
+              />
+            </div>
           </div>
-          <div>
-            <p className="text-xl font-semibold">{chatPartner.name}</p>
-            <p className="text-gray-600">{chatPartner.email}</p>
+
+          <div className='flex flex-col leading-tight'>
+            <div className='text-xl flex items-center'>
+              <span className='text-gray-700 mr-3 font-semibold'>
+                {chatPartner.name}
+              </span>
+            </div>
+
+            <span className='text-sm text-gray-600'>{chatPartner.email}</span>
           </div>
         </div>
-        <Message
-          sessionUserId={session.user.id}
-          initialMessages={messages}
-          sessionImage={session.user.image}
-          chatPartner={chatPartner}
-          chatId={chatId}
-        />
-        <ChatInput chatId={chatId} chatPartner={chatPartner} />
       </div>
-    </>
-  );
+
+      <Messages
+        chatId={chatId}
+        chatPartner={chatPartner}
+        sessionImg={session.user.image}
+        sessionId={session.user.id}
+        initialMessages={initialMessages}
+      />
+      <ChatInput chatId={chatId} chatPartner={chatPartner} />
+    </div>
+  )
 }
+
+export default page

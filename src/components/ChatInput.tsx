@@ -1,76 +1,73 @@
-"use client";
-import { Alert, Button, Spinner, Toast } from "flowbite-react";
-import React, { useRef, useState } from "react";
-import TextareaAutosize from "react-textarea-autosize";
-import { LuSendHorizonal } from "react-icons/lu";
-import { HiExclamation } from "react-icons/hi";
-import axios from "axios";
+'use client'
 
-export default function ChatInput({
-  chatPartner,
-  chatId,
-}: {
-  chatPartner: User;
-  chatId: string;
-}) {
-  const textAreaRef = useRef<HTMLTextAreaElement | null>(null);
-  const [typedMessage, setTypedMessage] = useState<string>("");
-  const [error, seterror] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+import axios from 'axios'
+import { FC, useRef, useState } from 'react'
+import { toast } from 'react-hot-toast'
+import TextareaAutosize from 'react-textarea-autosize'
+import Button from './ui/Button'
+
+interface ChatInputProps {
+  chatPartner: User
+  chatId: string
+}
+
+const ChatInput: FC<ChatInputProps> = ({ chatPartner, chatId }) => {
+  const textareaRef = useRef<HTMLTextAreaElement | null>(null)
+  const [isLoading, setIsLoading] = useState<boolean>(false)
+  const [input, setInput] = useState<string>('')
+
   const sendMessage = async () => {
-    if (typedMessage === "") return;
-    if (isLoading) return;
-    setIsLoading(true);
-    seterror(false);
+    if(!input) return
+    setIsLoading(true)
+
     try {
-      await axios.post(`/api/message/send`, { text: typedMessage, chatId });
-      setTypedMessage("");
-
-      textAreaRef.current?.focus();
-    } catch (error) {
-      console.log("errMess", error);
-
-      seterror(true);
+      await axios.post('/api/message/send', { text: input, chatId })
+      setInput('')
+      textareaRef.current?.focus()
+    } catch {
+      toast.error('Something went wrong. Please try again later.')
     } finally {
-      setIsLoading(false);
+      setIsLoading(false)
     }
-  };
+  }
+
   return (
-    <div className="border-t border-gray-300 p-4 mb-2 sm:mb-0">
-      <div className="relative overflow-hidden  min-h-12 z-10 flex-1 rounded-lg  shadow-sm ring-1 ring-inset ring-gray-200 focus-within:ring-2 focus-within:ring-cyan-400">
-        {error && (
-          <Toast className="m-2">
-            <div className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-orange-100 text-orange-500 dark:bg-orange-700 dark:text-orange-200">
-              <HiExclamation className="h-5 w-5" />
-            </div>
-            <div className="ml-3 text-sm font-normal">Something went wrong</div>
-            <Toast.Toggle />
-          </Toast>
-        )}
+    <div className='border-t border-gray-200 px-4 pt-4 mb-2 sm:mb-0'>
+      <div className='relative flex-1 overflow-hidden rounded-lg shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-indigo-600'>
         <TextareaAutosize
+          ref={textareaRef}
           onKeyDown={(e) => {
-            if (e.key === "Enter" && !e.shiftKey) {
-              e.preventDefault();
-              sendMessage();
+            if (e.key === 'Enter' && !e.shiftKey) {
+              e.preventDefault()
+              sendMessage()
             }
           }}
-          ref={textAreaRef}
-          rows={4}
-          value={typedMessage}
-          onChange={(e) => setTypedMessage(e.target.value)}
-          className="block w-full overflow-y-scroll no-scrollbar resize-none border-0 bg-transparent text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm p-2"
-          placeholder={`message ${chatPartner?.name.toLocaleLowerCase()}`}
-          maxRows={10}
+          rows={1}
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
+          placeholder={`Message ${chatPartner.name}`}
+          className='block w-full resize-none border-0 bg-transparent text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:py-1.5 sm:text-sm sm:leading-6'
         />
-        <Button
-          disabled={isLoading}
-          onClick={sendMessage}
-          className=" absolute right-0 bottom-0 m-1"
-          size={"sm"}
-        >
-          {isLoading ? <Spinner size={"sm"} /> : <LuSendHorizonal />}
-        </Button>
+
+        <div
+          onClick={() => textareaRef.current?.focus()}
+          className='py-2'
+          aria-hidden='true'>
+          <div className='py-px'>
+            <div className='h-9' />
+          </div>
+        </div>
+
+        <div className='absolute right-0 bottom-0 flex justify-between py-2 pl-3 pr-2'>
+          <div className='flex-shrin-0'>
+            <Button isLoading={isLoading} onClick={sendMessage} type='submit'>
+              Post
+            </Button>
+          </div>
+        </div>
       </div>
     </div>
-  );
+  )
 }
+
+export default ChatInput

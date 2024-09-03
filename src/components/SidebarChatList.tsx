@@ -1,80 +1,106 @@
-"use client";
-import { chatHrefGenerator } from "@/helper/chatHrefGenerator";
-import Image from "next/image";
-import { usePathname, useRouter } from "next/navigation";
-import React, { useEffect, useState } from "react";
-import ChatFriendCard from "./ChatFriendCard";
-import { pusherClient } from "@/lib/pusher";
-import { toPusherString } from "@/lib/utils";
-import MessageToast from "./MessageToast";
+'use client'
 
-export interface ExtendedMessage extends Message {
-  senderImg: string;
-  senderName: string;
+import { pusherClient } from '@/lib/pusher'
+import { chatHrefConstructor, toPusherKey } from '@/lib/utils'
+import { usePathname, useRouter } from 'next/navigation'
+import { FC, useEffect, useState } from 'react'
+import { toast } from 'react-hot-toast'
+import UnseenChatToast from './UnseenChatToast'
+
+interface SidebarChatListProps {
+  friends: User[]
+  sessionId: string
 }
 
-export default function SidebarChatList({
-  friends,
-  sessionUserId,
-}: {
-  friends: User[];
-  sessionUserId: string;
-}) {
-  const router = useRouter();
-  const pathname = usePathname();
-  const [unseenMessages, setUnseenMessages] = useState<Message[]>([]);
-  const [lastMessage, setLastMessage] = useState<ExtendedMessage>();
+interface ExtendedMessage extends Message {
+  senderImg: string
+  senderName: string
+}
+
+const SidebarChatList: FC<SidebarChatListProps> = ({ friends, sessionId }) => {
+  const router = useRouter()
+  const pathname = usePathname()
+  const [unseenMessages, setUnseenMessages] = useState<Message[]>([])
+  const [activeChats, setActiveChats] = useState<User[]>(friends)
 
   useEffect(() => {
-    pusherClient.subscribe(toPusherString(`user:${sessionUserId}:chats`));
-    pusherClient.subscribe(toPusherString(`user:${sessionUserId}:friends`));
+    pusherClient.subscribe(toPusherKey(`user:${sessionId}:chats`))
+    pusherClient.subscribe(toPusherKey(`user:${sessionId}:friends`))
+
+    const newFriendHandler = (newFriend: User) => {
+      console.log("received new user", newFriend)
+      setActiveChats((prev) => [...prev, newFriend])
+    }
 
     const chatHandler = (message: ExtendedMessage) => {
-      const isNotify =
-        pathname !== `${chatHrefGenerator(sessionUserId, message?.senderId)}`;
-      console.log(
-        isNotify,
-        chatHrefGenerator(sessionUserId, message?.senderId)
-      );
-      if (!isNotify) return;
-      setLastMessage(message);
-    };
-    const friendHandler = () => {
-      router.refresh();
-    };
-    pusherClient.bind("new_message", chatHandler);
-    pusherClient.bind("new_friend", friendHandler);
+      const shouldNotify =
+        pathname !==
+        `/dashboard/chat/${chatHrefConstructor(sessionId, message.senderId)}`
+
+      if (!shouldNotify) return
+
+      // should be notified
+      toast.custom((t) => (
+        <UnseenChatToast
+          t={t}
+          sessionId={sessionId}
+          senderId={message.senderId}
+          senderImg={message.senderImg}
+          senderMessage={message.text}
+          senderName={message.senderName}
+        />
+      ))
+
+      setUnseenMessages((prev) => [...prev, message])
+    }
+
+    pusherClient.bind('new_message', chatHandler)
+    pusherClient.bind('new_friend', newFriendHandler)
+
     return () => {
-      pusherClient.unsubscribe(toPusherString(`user:${sessionUserId}:chats`));
-      pusherClient.unsubscribe(toPusherString(`user:${sessionUserId}:friends`));
-    };
-  }, [pathname, sessionUserId, router]);
+      pusherClient.unsubscribe(toPusherKey(`user:${sessionId}:chats`))
+      pusherClient.unsubscribe(toPusherKey(`user:${sessionId}:friends`))
+
+      pusherClient.unbind('new_message', chatHandler)
+      pusherClient.unbind('new_friend', newFriendHandler)
+    }
+  }, [pathname, sessionId, router])
 
   useEffect(() => {
-    if (pathname?.includes("chat")) {
-      unseenMessages.filter((msg) => !pathname.includes(msg.senderId));
+    if (pathname?.includes('chat')) {
+      setUnseenMessages((prev) => {
+        return prev.filter((msg) => !pathname.includes(msg.senderId))
+      })
     }
-  }, [pathname, unseenMessages]);
-  return (
-    <div>
-      <MessageToast message={lastMessage} sessionUserId={sessionUserId} />
-      <h1 className="text-lg font-semibold">chats</h1>
-      <ul className="max-h-[125rem] overflow-y-hidden">
-        {friends.sort().map((friend, ind) => {
-          const noOfUnseenMessages = unseenMessages.filter(
-            (msg) => msg.senderId === friend.id
-          ).length;
+  }, [pathname])
 
-          return (
-            <li
-              key={ind}
-              className=" flex gap-1 items-center m-2 border-2 p-2 border-white shadow-md rounded-md hover:text-gray-400"
-            >
-              <ChatFriendCard sessionUserId={sessionUserId} friend={friend} />
-            </li>
-          );
-        })}
-      </ul>
-    </div>
-  );
+  return (
+    <ul role='list' className='max-h-[25rem] overflow-y-auto -mx-2 space-y-1'>
+      {activeChats.sort().map((friend) => {
+        const unseenMessagesCount = unseenMessages.filter((unseenMsg) => {
+          return unseenMsg.senderId === friend.id
+        }).length
+
+        return (
+          <li key={friend.id}>
+            <a
+              href={`/dashboard/chat/${chatHrefConstructor(
+                sessionId,
+                friend.id
+              )}`}
+              className='text-gray-700 hover:text-indigo-600 hover:bg-gray-50 group flex items-center gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold'>
+              {friend.name}
+              {unseenMessagesCount > 0 ? (
+                <div className='bg-indigo-600 font-medium text-xs text-white w-4 h-4 rounded-full flex justify-center items-center'>
+                  {unseenMessagesCount}
+                </div>
+              ) : null}
+            </a>
+          </li>
+        )
+      })}
+    </ul>
+  )
 }
+
+export default SidebarChatList
