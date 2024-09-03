@@ -39,7 +39,7 @@ export default function Message({
     };
   }, []);
   return (
-    <div className="flex h-full flex-1 flex-col-reverse gap-4 p-3 overflow-y-auto">
+    <div className="flex h-full flex-1 flex-col-reverse gap-4 p-3 overflow-y-auto scrollbar">
       <div ref={scrollDownRef} />
       {messages?.map((message, ind) => {
         const isCurrentUser = message.senderId === sessionUserId;

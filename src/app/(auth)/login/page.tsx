@@ -6,7 +6,7 @@ import { FcGoogle } from "react-icons/fc";
 
 function LogInPage() {
   const [isLoading, setIsLoading] = useState(false);
-  const [errorMessage, setErrorMessage] = useState(null);
+  const [errorMessage, setErrorMessage] = useState<any>(null);
   const handleGoogleSignIn = async () => {
     setIsLoading(true);
     setErrorMessage(null);
@@ -14,7 +14,6 @@ function LogInPage() {
       await signIn("google");
     } catch (error) {
       setErrorMessage(error);
-    console.log(error);
     }
     setIsLoading(false);
   };

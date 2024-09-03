@@ -8,7 +8,7 @@ export async function POST(req: Request) {
   try {
     const body = await req.json();
     const { id: idToAdd } = z.object({ id: z.string() }).parse(body);
-    console.log("hit api", idToAdd);
+
     const session = await getServerSession(authOptions);
     if (!session) {
       return new Response("You are not logged in.", { status: 400 });

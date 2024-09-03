@@ -13,7 +13,9 @@ import {
   HiUser,
   HiViewBoards,
 } from "react-icons/hi";
-
+import { IoMdPersonAdd } from "react-icons/io";
+import MessageToast from "./MessageToast";
+import { RxDashboard } from "react-icons/rx";
 export function DashSideBar({
   unseenFriendRequest,
   sessionId,
@@ -23,6 +25,7 @@ export function DashSideBar({
 }) {
   const [unSeenFriendRequestCount, setUnSeenFriendRequestCount] =
     useState<number>(unseenFriendRequest);
+
   useEffect(() => {
     pusherClient.subscribe(
       toPusherString(`user:${sessionId}:incoming_friend_request`)
@@ -42,13 +45,15 @@ export function DashSideBar({
     <Sidebar aria-label="Default sidebar example" className="w-full">
       <Sidebar.Items>
         <Sidebar.ItemGroup>
-          <Sidebar.Item href="/dashboard" icon={HiChartPie}>
+          <Sidebar.Item href="/dashboard" icon={RxDashboard}>
             Dashboard
           </Sidebar.Item>
-
+          <Sidebar.Item href="/dashboard/add" icon={IoMdPersonAdd}>
+            Add friends
+          </Sidebar.Item>
           <Sidebar.Item href="/dashboard/requests" icon={HiUser}>
             <div className="flex justify-between">
-              <h1>Friend request</h1>
+              <h1>Friend requests</h1>
               <span
                 className="h-6 w-6 bg-purple-500 rounded-md text-center text-white "
                 hidden={unSeenFriendRequestCount == 0}
@@ -56,12 +61,6 @@ export function DashSideBar({
                 {unSeenFriendRequestCount}
               </span>
             </div>
-          </Sidebar.Item>
-          <Sidebar.Item href="/dashboard/add" icon={HiUser}>
-            Add friends
-          </Sidebar.Item>
-          <Sidebar.Item href="#" icon={HiShoppingBag}>
-            Products
           </Sidebar.Item>
         </Sidebar.ItemGroup>
       </Sidebar.Items>

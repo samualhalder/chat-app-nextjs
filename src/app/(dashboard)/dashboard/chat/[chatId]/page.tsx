@@ -55,7 +55,7 @@ export default async function Page({ params }: ParamsType) {
     <>
       <div className="flex flex-col justify-between  h-full flex-grow p-0 m-0">
         {/* top bar  */}
-        <div className="flex items-center gap-4 border-b-2 border-cyan-400 w-full p-2">
+        <div className="flex items-center gap-4 border-1 shadow-lg w-full p-2">
           <div className="h-10 w-10 rounded-full overflow-hidden relative ">
             <Image
               fill

@@ -4,15 +4,16 @@ import { SignOutButton } from "@/components/SignOutButton";
 import { getAllFriendsById } from "@/helper/get-all-friends-by-id";
 import { fetchRedis } from "@/helper/redis";
 import { authOptions } from "@/lib/auth";
-import { Sidebar } from "flowbite-react";
+import { Sidebar, Toast } from "flowbite-react";
 import { getServerSession } from "next-auth";
 import Image from "next/image";
 import { notFound } from "next/navigation";
-import React from "react";
+import React, { useState } from "react";
 import { IoIosChatboxes } from "react-icons/io";
 
 const Layout = async ({ children }: { children: React.ReactNode }) => {
   const userSession = await getServerSession(authOptions);
+
   const user = userSession?.user;
   if (!userSession) {
     return notFound();
@@ -29,10 +30,9 @@ const Layout = async ({ children }: { children: React.ReactNode }) => {
   return (
     <div className="h-screen w-[100%] flex flex-col sm:flex-row grow-0 ">
       {/* SideBar */}
-      <div className="flex flex-col justify-between w-full sm:w-[500px] border-2 border-cyan-600">
+      <div className="flex flex-col justify-between w-full sm:w-[500px] border-2  border-r-cyan-600">
         <IoIosChatboxes size={60} className="mx-auto" />
         <nav className="text-gray-700 p-10">
-          <h1 className="text-lg font-semibold">chats</h1>
           <SidebarChatList
             sessionUserId={userSession.user.id}
             friends={friends}

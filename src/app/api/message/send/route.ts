@@ -26,7 +26,7 @@ export async function POST(req: Request) {
     }
     const senderString = (await fetchRedis(
       "get",
-      `user:${session.user}`
+      `user:${session.user.id}`
     )) as string;
     const sender = JSON.parse(senderString) as User;
     const timestamp = Date.now();
@@ -43,6 +43,17 @@ export async function POST(req: Request) {
       "incoming-messages",
       message
     );
+
+    pusherServer.trigger(
+      toPusherString(`user:${friendId}:chats`),
+      "new_message",
+      {
+        ...message,
+        senderImg: sender.image,
+        senderName: sender.name,
+      }
+    );
+
     await db.zadd(`chat:${chatId}:messages`, {
       score: timestamp,
       member: JSON.stringify(message),
