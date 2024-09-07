@@ -8,7 +8,7 @@ import { getServerSession } from "next-auth";
 import { z } from "zod";
 
 export async function POST(req: Request) {
-  console.log("hit");
+
   try {
     const body = await req.json();
 
