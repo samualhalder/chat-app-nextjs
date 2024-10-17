@@ -1,36 +1,35 @@
-# FriendZone - A full-stack realtime messaging chat application
+# This is a Next.js project bootstrapped with create-next-app.
 
-A project to learn modern full-stack development made by Josh.
+Getting Started
+First, run the development server:
 
-## Features
+npm run dev
 
-- Realtime messaging
-- Adding friends and sending friend requests via email
-- Performant database queries with Redis
-- Responsive UI built with TailwindCSS
-- Protection of sensitive routes
-- Google authentication
+# or
 
-- Built with TypeScript
-- TailwindCSS
-- Icons from Lucide
+yarn dev
 
-- Class merging with tailwind-merge
-- Conditional classes with clsx
-- Variants with class-variance-authority
+# or
 
-## Things I forgot in the video
-- [Adding metadata to some pages](https://github.com/joschan21/nextjs-realtime-chat/blob/master/src/app/(dashboard)/dashboard/chat/%5BchatId%5D/page.tsx)
-- [Adding a favicon](https://github.com/joschan21/nextjs-realtime-chat/blob/master/public/favicon.ico)
+pnpm dev
 
-## Acknowledgements
+# or
 
-- [Awesome Button UI Component](https://ui.shadcn.com/)
+bun dev
+Open http://localhost:3000 with your browser to see the result.
 
-## Feedback
+You can start editing the page by modifying app/page.tsx. The page auto-updates as you edit the file.
 
-If you have any feedback, please reach out to me at admin@wordful.ai
+This project uses next/font to automatically optimize and load Inter, a custom Google Font.
 
-## License
+Learn More
+To learn more about Next.js, take a look at the following resources:
 
-[MIT](https://choosealicense.com/licenses/mit/)
+Next.js Documentation - learn about Next.js features and API.
+Learn Next.js - an interactive Next.js tutorial.
+You can check out the Next.js GitHub repository - your feedback and contributions are welcome!
+
+Deploy on Vercel
+The easiest way to deploy your Next.js app is to use the Vercel Platform from the creators of Next.js.
+
+Check out our Next.js deployment documentation for more details.
